@@ -7,14 +7,21 @@ pipeline {
                 git url: 'https://github.com/Bourbontha/sast-demo-app.git', branch: 'master'
             }
         }
-        stage('Install Dependencies') {
+        stage('Setup Python Environment') {
             steps {
-                sh 'pip install bandit'
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install bandit
+                '''
             }
         }
         stage('SAST Analysis') {
             steps {
-                sh 'bandit -f xml -o bandit-output.xml -r . || true'
+                sh '''
+                source venv/bin/activate
+                bandit -f xml -o bandit-output.xml -r . || true
+                '''
                 recordIssues tools: [bandit(pattern: 'bandit-output.xml')]
             }
         }
