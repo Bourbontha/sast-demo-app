@@ -7,6 +7,12 @@ pipeline {
                 git url: 'https://github.com/Bourbontha/sast-demo-app.git', branch: 'master'
             }
         }
+        stage('Install Python3-venv') {
+            steps {
+                sh 'sudo apt-get update'
+                sh 'sudo apt-get install -y python3-venv'
+            }
+        }
         stage('Setup Python Environment') {
             steps {
                 sh '''
