@@ -19,8 +19,18 @@ pipeline {
         }
         stage('SAST Analysis') {
             steps {
-                sh 'bandit -r . -f xml -o bandit-output.xml || true'
-                recordIssues tools: [bandit(pattern: 'bandit-output.xml')]
+                sh 'bandit -r . -f html -o bandit-report.html || true'
+            }
+        }
+        stage('Publish Report') {
+            steps {
+                publishHTML(target: [
+                    reportName: 'Bandit Report',
+                    reportDir: '.',
+                    reportFiles: 'bandit-report.html',
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true
+                ])
             }
         }
     }
